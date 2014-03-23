@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>File Sender</title>
+</head>
+
+<script src="jquery.min.js"></script>
+<script type="text/javascript" src="jquery.qrcode.js"></script>
+<script type="text/javascript" src="qrcode.js"></script>
+
+<body>
+	
+	<input style="display:none;" id="fileDialog" type="file" />
+	<div id="qrcodeCanvas"></div>
+
+	<script>
+		var gui = require('nw.gui');
+		var http = require('http');
+		var path = require('path');
+		var utils = require('./utils.js');
+
+		var file = gui.App.argv[0];
+			
+		var ip = utils.getIP();
+		var secureString;
+		var pathName;
+
+
+		http.createServer(function (req, res) {
+		var urlSecureString = utils.parseSecureString(req.url);
+		var urlPathName = utils.parsePathName(req.url);
+		if(urlPathName == pathName && urlSecureString == secureString){
+
+			utils.sendFile(file,res);
+		}
+		else{
+			res.writeHead(200, {'Content-Type': 'text/plain'});
+			res.end('Permission denied or file expired please scan barcode again to download the file\n');
+		}
+			
+		}).listen(1337, ip);
+
+		var fs = require('fs');
+		if (!fs.existsSync(file)) {
+			function chooseFile(name) {
+				var chooser = $(name);
+				chooser.change(function(evt) {
+				  file = $(this).val();
+				  pathName = "/"+encodeURIComponent(path.basename(file));
+				  createNewQRCode();
+				});
+
+				chooser.trigger('click');  
+			 }
+			 chooseFile('#fileDialog');
+		}
+		else
+		{
+			createNewQRCode();
+		}
+		
+
+		function createNewQRCode()
+		{
+			secureString = utils.generateSecureString();       
+			var url = {};
+			url.text = "http://"+ip+":1337"+pathName+"?secure="+secureString;
+			var canvas = jQuery('#qrcodeCanvas');
+			canvas.empty();
+			canvas.qrcode(url);
+			setTimeout(createNewQRCode,60000);
+		}
+	</script>
+
+</body>
+</html>

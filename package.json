@@ -1,0 +1,13 @@
+{
+  "name": "File sender",
+  "main": "index.html",
+  "window": {
+    "toolbar": false,
+    "icon": "refresh-icon.png",
+    "position": "center",
+	"frame": true,
+	"resizable": false,
+    "width": 272,
+    "height": 278
+  }
+}
