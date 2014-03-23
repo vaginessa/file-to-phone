@@ -22,3 +22,6 @@ $ ./nw app.nw
 ```bash
 $ ./nw app.nw /path/to/file
 ```
+
+##Tips
+* In windows you can add a shortcut to the [SendTo folder](http://www.howtogeek.com/howto/windows-vista/customize-the-windows-vista-send-to-menu/) and start the application from the right click menu of a file
